@@ -11,9 +11,15 @@ import PackageDescription
     // link time.
     let cSettings: [CSetting] = [
         .define("CMARK_GFM_STATIC_DEFINE", .when(platforms: [.windows])),
+        // Disable profiling to avoid ___llvm_profile_runtime linker errors
+        .unsafeFlags(["-fno-profile-instr-generate", "-fno-coverage-mapping"]),
     ]
 #else
-    let cSettings: [CSetting] = []
+    // Disable profiling to avoid ___llvm_profile_runtime linker errors
+    // SPM enables profiling by default in Debug builds, but doesn't link the runtime
+    let cSettings: [CSetting] = [
+        .unsafeFlags(["-fno-profile-instr-generate", "-fno-coverage-mapping"]),
+    ]
 #endif
 
 let package = Package(
